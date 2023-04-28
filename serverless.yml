@@ -1,16 +1,3 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
-
 service: my-wig-shop-app  #TIP change this with your own service name
 
 # app and org for use with dashboard.serverless.com
@@ -19,15 +6,15 @@ service: my-wig-shop-app  #TIP change this with your own service name
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
-frameworkVersion: '3.20.0' #TIP verify this version with serverless --version
+frameworkVersion: '3' #TIP verify this version with serverless --version
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs12.x
   region: us-east-2 #TIP this must match with your region 
   stage: dev
   #TIP  this is my personal AWS account. This must be skipped in you serverless.yml
-  profile: RER-DEV
+  profile: RER-DEV  #RER-DEV #TODO put the root profiles keys as default
 
 plugins:
   - serverless-finch
@@ -37,7 +24,7 @@ custom:
   ## Serverless-finch configuration 
   
   client:
-    bucketName: shop-react-app #TIP put the name of your bucketName
+    bucketName: shop-react-app-rer01 #TIP put the name of your bucketName this should be unique globally
     distributionFolder: dist #TIP this is the folder to upload
     indexDocument: index.html
     manageResources: false
@@ -48,84 +35,6 @@ custom:
  # TIP: if it fails due bucket removed manually or it exists 
  # aws s3 mb s3://<your-deployment-bucket-name> --region <your-preferred-region> and change the values in this file remember run it with --profile Available-Profile
 
-# you can overwrite defaults here
-#  stage: dev
-#  region: us-east-2
-
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
-# you can add packaging information here
-#package:
-#  include:
-#    - include-me.js
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.js
-#    - exclude-me-dir/**
-
-#functions:
-#  hello:
-#    handler: handler.hello
-#    The following are a few example events you can configure
-#    NOTE: Please make sure to change your handler code to work with those events
-#    Check the event documentation for details
-#    events:
-#      - http:
-#          path: users/create
-#          method: get
-#      - websocket: $connect
-#      - s3: ${env:BUCKET}
-#        event: s3:ObjectCreated:*
-#        existing: true
-#      - schedule: rate(10 minutes)
-#      - sns: greeter-topic
-#      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
-#      - alexaSkill: amzn1.ask.skill.xx-xx-xx-xx
-#      - alexaSmartHome: amzn1.ask.skill.xx-xx-xx-xx
-#      - iot:
-#          sql: "SELECT * FROM 'some_topic'"
-#      - cloudwatchEvent:
-#          event:
-#            source:
-#              - "aws.ec2"
-#            detail-type:
-#              - "EC2 Instance State-change Notification"
-#            detail:
-#              state:
-#                - pending
-#      - cloudwatchLog: '/aws/lambda/hello'
-#      - cognitoUserPool:
-#          pool: MyUserPool
-#          trigger: PreSignUp
-#      - alb:
-#          listenerArn: arn:aws:elasticloadbalancing:us-east-1:XXXXXX:listener/app/my-load-balancer/50dc6c495c0c9188/
-#          priority: 1
-#          conditions:
-#            host: example.com
-#            path: /hello
-
-#    Define function environment variables here
-#    environment:
-#      variable2: value2
-
 # you can add CloudFormation resource templates here
 resources:
   Resources:
@@ -134,20 +43,20 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:custom.s3BucketName}
-        AccessControl: PublicRead
-       # OwnershipControls:
-       #   Rules:
-       #     - ObjectOwnership: ObjectWriter
-       # PublicAccessBlockConfiguration:
-       #   BlockPublicAcls: false
-       #   BlockPublicPolicy: false
-       #   IgnorePublicAcls: false 
-       #   RestrictPublicBuckets: false    
+       # AccessControl: PublicRead
+        OwnershipControls:
+          Rules:
+            - ObjectOwnership: ObjectWriter
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          BlockPublicPolicy: false
+          IgnorePublicAcls: false 
+          RestrictPublicBuckets: false    
         WebsiteConfiguration:
           IndexDocument: index.html
           ErrorDocument: index.html
         # VersioningConfiguration:
-        #   Status: Enabled
+        #  Status: Enabled
 
     ## Specifying the policies to make sure all files inside the Bucket are avaialble to CloudFront
     WebAppS3BucketPolicy:
@@ -185,11 +94,11 @@ resources:
               Id: S3StoreOrigin
               ## In case you don't want to restrict the bucket access use CustomOriginConfig and remove S3OriginConfig
               #S3OriginConfig:
-              #  OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OriginAccessIdentity}
+              # OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OriginAccessIdentity}
               CustomOriginConfig:
-                HTTPPort: 80
-                HTTPSPort: 443
-                OriginProtocolPolicy: https-only
+               HTTPPort: 80
+               HTTPSPort: 443
+               OriginProtocolPolicy: https-only
           Enabled: true
           IPV6Enabled: true
           HttpVersion: http2
