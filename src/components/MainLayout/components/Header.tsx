@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React from "react";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -24,16 +25,16 @@ export default function Header() {
   };
 
   return (
-    <AppBar position="relative">
+    <AppBar position="relative" style={{ backgroundColor: '#e25909'}}>
       <Toolbar>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+        <Typography variant="h5" sx={{ flexGrow: 1 }}>
           <Link
             component={RouterLink}
             sx={{ color: "inherit" }}
             underline="none"
             to="/"
           >
-            My Store!
+            Welcome to The Wig Store!
           </Link>
         </Typography>
 
